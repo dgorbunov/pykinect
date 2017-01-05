@@ -4,7 +4,7 @@
 using libfreenect2::Frame;
 
 void py_Frame_destroy(PyObject *frameCapsule) {
-	delete ((Frame*) PyCapsule_GetPointer(frameCapsule, "Frame"));
+	//delete ((Frame*) PyCapsule_GetPointer(frameCapsule, "Frame"));
 }
 
 PyObject *py_Frame_getHeight(PyObject *self, PyObject *args) {
