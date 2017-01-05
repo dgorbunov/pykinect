@@ -53,13 +53,13 @@ PyObject *py_Frame_getDepthData(PyObject *self, PyObject *args)
 		return NULL;
 	Frame *frame = (Frame*) PyCapsule_GetPointer(frameCapsule, "Frame");
 
-	npy_intp dims[] = {frame->height, frame->width, 4};
+	npy_intp dims[] = {frame->height, frame->width, 2};
 
 	import_array();
 
-	PyArrayObject *array = (PyArrayObject*) PyArray_SimpleNewFromData(3, 
+	PyArrayObject *array = (PyArrayObject*) PyArray_SimpleNewFromData(2,
 									  dims, 
-									  NPY_UINT8,
+									  NPY_FLOAT,
 									  frame->data);
 	return (PyObject*) array;
 }
