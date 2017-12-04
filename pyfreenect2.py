@@ -182,9 +182,8 @@ class Frame:
     def getRGBData(self):
         ## todo fix fliplr necessity
         ## todo fix BGR :/
-        BGR = np.fliplr(_pyfreenect2.Frame_getData(self._capsule))
-        RGB = swap_c0c2(BGR)
-        return RGB
+        BGRA = np.fliplr(_pyfreenect2.Frame_getData(self._capsule))
+        return BGRA
 
     def getDepthData(self):
         ## todo fix fliplr necessity
