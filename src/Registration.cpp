@@ -1,5 +1,6 @@
 #include "../pyfreenect2.hpp"
 #include <iostream>
+#include "SmartFrame.h"
 
 using libfreenect2::Freenect2Device;
 using libfreenect2::Registration;
@@ -39,14 +40,18 @@ PyObject *py_Registration_apply(PyObject *self, PyObject *args) {
 	if(!PyArg_ParseTuple(args, "OOO", &registrationCapsule, &rgbFrameCapsule, &depthFrameCapsule))
 		return NULL;
 	Registration *registration = (Registration*) PyCapsule_GetPointer(registrationCapsule, "Registration");
-    Frame* rgbFrame = (Frame*) PyCapsule_GetPointer(rgbFrameCapsule, "Frame");
-    Frame* depthFrame = (Frame*) PyCapsule_GetPointer(depthFrameCapsule, "Frame");
+	SPFrame *rgbSPFrame = (SPFrame*) PyCapsule_GetPointer(rgbFrameCapsule, "Frame");
+	SPFrame *depthSPFrame = (SPFrame*) PyCapsule_GetPointer(depthFrameCapsule, "Frame");
 
+	Frame *rgbFrame = rgbSPFrame->acquire();
+    Frame *depthFrame = depthSPFrame->acquire();
     registration->apply(rgbFrame, depthFrame, undistorted, registered, true, bigdepth);
+    depthSPFrame->release();
+    rgbSPFrame->release();
 
-    PyObject* _undist = PyCapsule_New(undistorted,"Frame", NULL);
-    PyObject* _reg = PyCapsule_New(registered,"Frame", NULL);
-    PyObject* _bd = PyCapsule_New(bigdepth,"Frame", NULL);
+    PyObject* _undist = PyCapsule_New(new SPFrame(undistorted),"Frame", NULL);
+    PyObject* _reg = PyCapsule_New(new SPFrame(registered),"Frame", NULL);
+    PyObject* _bd = PyCapsule_New(new SPFrame(bigdepth),"Frame", NULL);
     PyObject *rslt = PyTuple_New(3);
     PyTuple_SetItem(rslt, 0, _undist);
     PyTuple_SetItem(rslt, 1, _reg);
