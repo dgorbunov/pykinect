@@ -3,6 +3,12 @@ py3freenect2
 
 Python bindings for [libfreenect2](https://github.com/OpenKinect/libfreenect2).
 
+This fork contains:
+- Better handling of data (smart pointer instead of copy)
+- Registration code
+- Depth copied as float
+- Output as BGRA, with no additional copy
+
 Requirements
 ---------
 
@@ -25,8 +31,6 @@ For usage, see `test.py`.
 
 TODO List
 ---------
- * ~~Make `test.py` actually display the frames~~
- * Implement Registration.apply (in py_Registration_apply)
  * Make the pipeline argument of Freenect2Device's constructor actually do something
  * Test everything
 
