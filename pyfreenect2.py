@@ -32,6 +32,7 @@ class PyFreeNect2(object):
         rgbFrame = frames.getFrame(Frame.COLOR)
         depthFrame = frames.getFrame(Frame.DEPTH)
 
+
         rgb_frame = rgbFrame.getRGBData()
         # rgb_to_bgr(rgb_frame)
         # bgr_to_rgb(rgb_frame)
@@ -178,6 +179,9 @@ class Frame:
 
     def getWidth(self):
         return _pyfreenect2.Frame_getWidth(self._capsule)
+
+    def getTimestamp(self):
+        return _pyfreenect2.Frame_getTimestamp(self._capsule)
 
     def getRGBData(self):
         ## todo fix fliplr necessity

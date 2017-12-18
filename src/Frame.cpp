@@ -54,6 +54,19 @@ PyObject *py_Frame_getData(PyObject *self, PyObject *args) {
 	return (PyObject*) array;
 }
 
+PyObject *py_Frame_getTimestamp(PyObject *self, PyObject *args) {
+
+	PyObject *frameCapsule = NULL;
+	if(!PyArg_ParseTuple(args, "O", &frameCapsule))
+		return NULL;
+	SPFrame *spFrame = (SPFrame*) PyCapsule_GetPointer(frameCapsule, "Frame");
+	Frame *frame = spFrame->acquire();
+
+	int timestamp = frame->timestamp;
+	spFrame->release();
+	return PyLong_FromLong(timestamp);
+}
+
 PyObject *py_Frame_getDepthData(PyObject *self, PyObject *args)
 {
 

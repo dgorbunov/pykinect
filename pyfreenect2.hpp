@@ -3,7 +3,6 @@
 #include <Python.h>
 #include <string>
 #include <libfreenect2/libfreenect2.hpp>
-#include <libfreenect2/logger.h>
 #include <libfreenect2/frame_listener_impl.h>
 #include <libfreenect2/registration.h>
 #include <numpy/arrayobject.h>
@@ -65,6 +64,7 @@ void py_Frame_destroy(PyObject *object);
 PyObject *py_Frame_getHeight(PyObject *self, PyObject *args);
 PyObject *py_Frame_getWidth(PyObject *self, PyObject *args);
 PyObject *py_Frame_getData(PyObject *self, PyObject *args);
+PyObject *py_Frame_getTimestamp(PyObject *self, PyObject *args);
 PyObject *py_Frame_getDepthData(PyObject *self, PyObject *args);
 
 ////////////////////////////////////////////////////////////////////////////////

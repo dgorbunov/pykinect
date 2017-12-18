@@ -57,6 +57,7 @@ static PyMethodDef pyfreenect2_methods[] = {
 	{ "Frame_getHeight", py_Frame_getHeight, METH_VARARGS, NULL },
 	{ "Frame_getWidth", py_Frame_getWidth, METH_VARARGS, NULL },
 	{ "Frame_getData", py_Frame_getData, METH_VARARGS, NULL },
+	{ "Frame_getTimestamp", py_Frame_getTimestamp, METH_VARARGS, NULL},
 	{ "Frame_getDepthData", py_Frame_getDepthData, METH_VARARGS, NULL },
 	// Sentinel
 	{ NULL, NULL, 0, NULL}
@@ -76,9 +77,6 @@ static struct PyModuleDef pyfreenect2_module = {
 
 PyMODINIT_FUNC
 PyInit__pyfreenect2() {
-
-  /// enables debug of libfreenect2
-  /// libfreenect2::setGlobalLogger(libfreenect2::createConsoleLogger(libfreenect2::Logger::Debug));
 
   import_array();
   return PyModule_Create(&pyfreenect2_module);
