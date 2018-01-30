@@ -1,6 +1,7 @@
 import _pyfreenect2
 import numpy as np
 from collections import namedtuple
+from enum import Enum
 
 ExtractedKinectFrame = namedtuple("ExtractedKinectFrame",
                                   ['RGB', 'BGR', 'IR', 'DEPTH'])
@@ -13,57 +14,15 @@ def swap_c0c2(a):
     return a2
 
 
-class PyFreeNect2(object):
-    def __init__(self):
-        self.serialNumber = getDefaultDeviceSerialNumber()
-        self.kinect = Freenect2Device(self.serialNumber)
-
-        self.frameListener = SyncMultiFrameListener(Frame.COLOR,
-                                                    Frame.IR,
-                                                    Frame.DEPTH)
-        self.kinect.setColorFrameListener(self.frameListener)
-        self.kinect.setIrAndDepthFrameListener(self.frameListener)
-        self.kinect.start()
-        self.registration = Registration(self.kinect)
-        print("%s setup done" % (self.__class__.__name__))
-
-    def get_new_frame(self, get_BGR=False):
-        frames = self.frameListener.waitForNewFrame()
-        rgbFrame = frames.getFrame(Frame.COLOR)
-        depthFrame = frames.getFrame(Frame.DEPTH)
-
-
-        rgb_frame = rgbFrame.getRGBData()
-        # rgb_to_bgr(rgb_frame)
-        # bgr_to_rgb(rgb_frame)
-
-        depth_frame = depthFrame.getDepthData()
-
-        bgr_frame = swap_c0c2(rgb_frame) if get_BGR else None
-
-        ## TODO :: IR
-        ext_k = ExtractedKinectFrame(RGB=rgb_frame,
-                                     BGR=bgr_frame,
-                                     DEPTH=depth_frame,
-                                     IR=None)
-        self.frameListener.release(frames)
-        return ext_k
-
-    def __del__(self):
-        self.kinect.stop()
-
-        ## todo :: call close method? was in original pyfreect test.py
-        # self.kinect.close()
+class Pipeline(Enum):
+    Cpu = 0
+    OpenCL = 1
+    OpenGL = 2
 
 
 class PyFreenect2Error(Exception):
     def __init__(self, message):
         super(PyFreenect2Error, self).__init__(message)
-
-
-class DeveloperIsALazyBastardError(Exception):
-    def __init__(self, message):
-        super(DeveloperIsALazyBastardError, self).__init__(message)
 
 
 ################################################################################
@@ -86,10 +45,10 @@ def getDefaultDeviceSerialNumber():
 ################################################################################
 
 class Freenect2Device:
-    def __init__(self, serialNumber, pipeline=None):
-        if pipeline is not None:
-            raise DeveloperIsALazyBastardError("pyfreenect2.PacketPipeline is not yet implemented")
-        self._capsule = _pyfreenect2.Freenect2Device_new(serialNumber)
+    def __init__(self, serialNumber, pipeline=Pipeline.OpenGL):
+        if not isinstance(pipeline, Pipeline):
+            raise RuntimeError("pipeline should be of enum class Pipeline, not {}".format(type(pipeline)))
+        self._capsule = _pyfreenect2.Freenect2Device_new(serialNumber, pipeline.value)
 
     def start(self):
         return _pyfreenect2.Freenect2Device_start(self._capsule)

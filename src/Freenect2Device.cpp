@@ -6,14 +6,20 @@ using libfreenect2::FrameListener;
 
 PyObject *py_Freenect2Device_new(PyObject *self, PyObject *args) {
 	char *serialNumber = NULL;
-	if(!PyArg_ParseTuple(args, "s", &serialNumber))
+	unsigned int pipeline_enum = 0;
+	if(!PyArg_ParseTuple(args, "sI", &serialNumber, &pipeline_enum))
 		return NULL;
-
-	// TODO Pipeline support
     libfreenect2::PacketPipeline *pipeline = 0;
-    pipeline = new libfreenect2::OpenGLPacketPipeline();
+	if(pipeline_enum == 0){
+        pipeline = new libfreenect2::CpuPacketPipeline();
+	}
+	//else if(pipeline_enum == 1){
+	    //pipeline = new libfreenect2::OpenCLPacketPipeline();
+	//}
+	else{
+        pipeline = new libfreenect2::OpenGLPacketPipeline();
+	}
 	Freenect2Device *device = getGlobalFreenect2().openDevice(serialNumber, pipeline);
-    std::cout << device << std::endl;
 	return PyCapsule_New(device, "Freenect2Device", py_Freenect2Device_destroy);
 }
 void py_Freenect2Device_destroy(PyObject *deviceCapsule) {
@@ -47,13 +53,8 @@ PyObject *py_Freenect2Device_setColorFrameListener(PyObject *self, PyObject *arg
 		return NULL;
 	Freenect2Device *device = (Freenect2Device*) PyCapsule_GetPointer(deviceCapsule, "Freenect2Device");
 
-	std::cout << "device in F2D.cpp: " << device << std::endl;
-	std::cout << "listenercapsule in F2D.cpp: " << listenerCapsule << std::endl;
 	Py_INCREF(listenerCapsule);
 	FrameListener *listener = (FrameListener*) PyCapsule_GetPointer(listenerCapsule, "SyncMultiFrameListener");
-
-	///// BOOO!!!
-	std::cout << "listener in F2D.cpp: " << listener << std::endl;
 	device->setColorFrameListener(listener);
 	Py_INCREF(Py_None);
 	return Py_None;
