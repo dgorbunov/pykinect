@@ -7,13 +7,6 @@ ExtractedKinectFrame = namedtuple("ExtractedKinectFrame",
                                   ['RGB', 'BGR', 'IR', 'DEPTH'])
 
 
-def swap_c0c2(a):
-    a2 = a.copy()
-    a2[:, :, 0] = a[:, :, 2]
-    a2[:, :, 2] = a[:, :, 0]
-    return a2
-
-
 class Pipeline(Enum):
     Cpu = 0
     OpenCL = 1
@@ -143,14 +136,10 @@ class Frame:
         return _pyfreenect2.Frame_getTimestamp(self._capsule)
 
     def getRGBData(self):
-        ## todo fix fliplr necessity
-        ## todo fix BGR :/
-        BGRA = np.fliplr(_pyfreenect2.Frame_getData(self._capsule))
-        return BGRA
+        return _pyfreenect2.Frame_getData(self._capsule)
 
     def getDepthData(self):
-        ## todo fix fliplr necessity
-        return np.fliplr(_pyfreenect2.Frame_getDepthData(self._capsule))
+        return _pyfreenect2.Frame_getDepthData(self._capsule)
 
 
 ################################################################################
