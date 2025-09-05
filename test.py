@@ -4,6 +4,7 @@ import cv2
 import scipy.misc
 import signal
 import pyfreenect2
+import numpy as np
 
 # This is pretty much a straight port of the Protonect program bundled with
 # libfreenect2.
@@ -57,13 +58,18 @@ while not shutdown:
     rgb_frame = rgbFrame.getRGBData()
 
     depth_frame[depth_frame==float('inf')] = 0
+    depth_frame = depth_frame.astype(np.uint16)
+    depth_frame *= 10
     bgr_frame = rgb_frame.copy()
     bgr_frame[:, :, 0] = rgb_frame[:, :, 2]
     bgr_frame[:, :, 2] = rgb_frame[:, :, 0]
 
-    bgr_frame_resize = scipy.misc.imresize(bgr_frame, size=.5)
-    depth_frame_resize = scipy.misc.imresize(depth_frame, size=.5)
-    frameListener.release()
+    bgr_frame_resize = bgr_frame
+    depth_frame_resize = depth_frame
+
+    # bgr_frame_resize = scipy.misc.imresize(bgr_frame, size=.5)
+    # depth_frame_resize = scipy.misc.imresize(depth_frame, size=.5)
+    frameListener.release(frames)
 
     # TODO Display the frames w/ OpenCV
     cv2.imshow("RGB", bgr_frame_resize)

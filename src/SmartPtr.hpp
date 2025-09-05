@@ -5,6 +5,7 @@
 #define _SMARTPTR_HPP_
 
 #include <pthread.h>
+#include "SpinLock.h"
 
 template<class T>
 class SmartPtr{
